@@ -5,33 +5,24 @@
 # Displays Y U no love me?! when receiving a SIGINT signal
 # Deletes the file /var/run/holbertonscript.pid and terminates itself when receiving a SIGQUIT or SIGTERM signal
 
-SIGTERM_handler()
-{
-    echo "I hate the kill command"
-    rm /var/run/holbertonscript.pid
-    exit 0
+cleanup_and_exit() {
+  echo "I hate the kill command"
+  rm -f /var/run/holbertonscript.pid
+  exit 0
 }
 
-SIGINT_handler()
-{
-    echo "Y U no love me?!"
-}
+# Trap SIGTERM and SIGQUIT signals to clean up and exit
+trap 'cleanup_and_exit' SIGTERM SIGQUIT
 
-SIGQUIT_handler()
-{
-    rm /var/run/holbertonscript.pid
-    exit 0
-}
+# Trap SIGINT signal to display a message
+trap 'echo "Y U no love me?!"' SIGINT
 
+# Get the script's PID and save it to a file
+echo $$ > /var/run/holbertonscript.pid
 
-trap "SIGTERM_handler" SIGTERM
-trap "SIGINT_handler" SIGINT
-trap "SIGQUIT_handler" SIGQUIT
-
-pgrep -f 100-process_and_pid_file >> /var/run/holbertonscript.pid
-while $1
-do
-echo "To infinity and beyond";
-sleep 2
+# Display "To infinity and beyond" indefinitely
+while true; do
+  echo "To infinity and beyond"
+  sleep 2
 done
 
