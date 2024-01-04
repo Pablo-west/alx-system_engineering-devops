@@ -1,15 +1,13 @@
 #!/usr/bin/env bash
 # sets up a client SSH configuration file so that we can connect to a server without using a password
-include stdlib
-file_line { 'Declare identity file':
- path 	=> '/etc/ssh/ssh_config',
- line	=> ' IdentifyFile ~/.ssh/school',
- replace => true,
+
+file { 'ect/ssh/ssh_config':
+	ensure => present,
+
+content => "
+	# SSH client configuration
+	host*
+	IdentityFile ~/.ssh/school
+	PasswordAuthentication no
+	",
 }
-
-file_line { 'Turn off passwd auth':
- path	=> '/etc/ssh/ssh_config',
- line	=> ' PasswordAuthentication no',
- replace => true,
-} 
-
