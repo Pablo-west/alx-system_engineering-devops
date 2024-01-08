@@ -1,15 +1,24 @@
 #!/usr/bin/env bash
-# This script configures the Nginx server with a custom header
+# Configuring web-01
 
-sudo apt-get -y update
-sudo apt-get -y install nginx
-sudo ufw allow 'Nginx HTTP'
-sudo chown -R "$USER":"$USER" /var/www
-echo "Hello World!" > /var/www/html/index.nginx-debian.html
-sudo sed -i "/server_name _;/ a\\\trewrite ^/redirect_me http://www.google.com permanent;" /etc/nginx/sites-available/default
-sudo mkdir -p /var/www/error
-echo "Ceci n'est pas une page" | sudo tee /var/www/error/404.html
-sudo sed -i '/server_name _/a error_page 404 /404.html; location = /404.html {root /var/www/error/;internal; }' /etc/nginx/sites-available/default
-sudo sed -i "s/include \/etc\/nginx\/sites-enabled\/\*;/include \/etc\/nginx\/sites-enabled\/\*;\n\tadd_header X-Served-By \"$HOSTNAME\";/" /etc/nginx/nginx.conf
-sudo service nginx start
+#Updating Packages before performing installation
+sudo apt-get update
+sudo apt-get install -y nginx
 
+# Creating an index.html page
+echo "Hello World!" | sudo tee /var/www/html/index.html
+
+#Perfrorming a "moved permanently redirection" (301)
+new_string="server_name _;\n\trewrite ^\/redirect_me https:\/\/github.com\/Pablo-west\/ permanent;"
+sudo sed -i "s/server_name _;/$new_string/" /etc/nginx/sites-enabled/default
+
+# Creating a Custom error page
+echo "Ceci n'est pas une page" | sudo tee /var/www/html/404.html
+
+# Custom HTTP response header
+sudo sed -i "server_name _;/a add_header X-Served-By $HOSTNAME;" /etc/nginx/sites-enabled/default
+
+sudo nginx -t
+
+sudo service nginx restart
+~                                       
