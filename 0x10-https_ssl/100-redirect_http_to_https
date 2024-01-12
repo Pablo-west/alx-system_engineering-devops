@@ -33,18 +33,13 @@ defaults
         errorfile 503 /etc/haproxy/errors/503.http
         errorfile 504 /etc/haproxy/errors/504.http
 
-frontend haproxy-main
+
+
+frontend  Pablo-west_frontend
         bind *:80
-        option forwardfor
-        redirect scheme https code 301 if !{ ssl_fc }
-        default_backend nginx_webservers
-
-frontend haproxy-https
-        bind *:443 ssl crt /etc/letsencrypt/live/www.darkphoenix.tech/fullchain.pem
-        default_backend nginx_webservers
-
-backend nginx_webservers
+        mode http
+        default_backend Pablo-west_backend
+backend Pablo-west_backend
         balance roundrobin
         server 441699-web-01 100.25.183.153:80 check
         server 441699-web-02 100.25.150.119:80 check
-
