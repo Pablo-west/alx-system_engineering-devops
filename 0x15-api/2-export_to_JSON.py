@@ -39,4 +39,3 @@ if __name__ == "__main__":
     file_Json = idEmp + ".json"
     with open(file_Json, 'w') as f:
         json.dump(updateUser, f)
-
