@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# This script gracefully restarts gunicorn app
+pkill -HUP gunicorn
+
