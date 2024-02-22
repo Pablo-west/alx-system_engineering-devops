@@ -1,13 +1,3 @@
 #!/usr/bin/env bash
-# This script gracefully restarts Gunicorn for the app named 'your_app_name'
-
-# Get the process ID of the Gunicorn master
-master_pid=$(pgrep -o gunicorn)
-
-# Check if Gunicorn is running
-if [ -n "$master_pid" ]; then
-    pkill -HUP -f "gunicorn.*$master_pid"
-    echo "Gunicorn restart initiated."
-else
-    echo "Gunicorn is not running. Nothing to restart."
-fi
+# Gracefully reloads Gunicorn
+systemctl status gunicorn | grep -oE 'Main PID: [0-9]+' | cut -d ' ' -f3 | xargs kill -HUP
