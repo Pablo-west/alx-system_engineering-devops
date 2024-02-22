@@ -1,3 +1,29 @@
-#!/usr/bin/env bash
-# This script gracefully restarts gunicorn app
-pkill -HUP gunicorn
+#!/bin/bash
+
+# Check if Gunicorn is running
+if pgrep gunicorn > /dev/null; then
+    echo "Reloading Gunicorn gracefully..."
+
+    # Get the process IDs of the Gunicorn master and workers
+    master_pid=$(pgrep -o gunicorn)
+    worker_pids=$(pgrep -o gunicorn -o -P $master_pid)
+
+    # Send a graceful reload signal to the master
+    kill -s HUP $master_pid
+
+    # Wait for the master to gracefully reload workers
+    sleep 5
+
+    # Check if the workers have been restarted
+    for pid in $worker_pids; do
+        if ! kill -0 $pid > /dev/null 2>&1; then
+            echo "Worker $pid has been gracefully restarted."
+        else
+            echo "Error: Worker $pid is still running."
+        fi
+    done
+
+    echo "Gunicorn reload complete."
+else
+    echo "Gunicorn is not running. Nothing to reload."
+fi
